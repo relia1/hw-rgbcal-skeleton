@@ -1,10 +1,10 @@
 #![no_std]
 #![no_main]
 
-mod knob;
+mod a2d;
 mod rgb;
 mod ui;
-pub use knob::*;
+pub use a2d::*;
 pub use rgb::*;
 pub use ui::*;
 
