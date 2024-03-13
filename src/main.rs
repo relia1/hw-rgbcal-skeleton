@@ -4,6 +4,7 @@
 mod a2d;
 mod rgb;
 mod ui;
+/// Reexports
 pub use a2d::*;
 pub use rgb::*;
 pub use ui::*;
@@ -13,29 +14,33 @@ use rtt_target::{rprintln, rtt_init_print};
 
 use embassy_executor::Spawner;
 use embassy_futures::join;
-// use embassy_nrf::saadc::{AnyInput, ChannelConfig, Config, Saadc};
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, mutex::Mutex};
 use embassy_time::Timer;
 use microbit_bsp::{
     embassy_nrf::{
         bind_interrupts,
         gpio::{AnyPin, Input, Level, Output, OutputDrive, Pull},
-        // peripherals::{P0_14, P0_23},
         saadc,
     },
-    Button, // Microbit,
+    Button,
 };
 use num_traits::float::FloatCore;
 
+/// Global mutex tracking the scaled value from the potentometer assigned to the LED
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
+/// Global mutex tracking the scaled value from the potentometer for the FPS
 pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(1);
+// Global constant for the number of levels in our scaling
 pub const LEVELS: u32 = 16;
 
+/// Async function that returns the RGB levels for the LEDs
 async fn get_rgb_levels() -> [u32; 3] {
     let rgb_levels = RGB_LEVELS.lock().await;
     *rgb_levels
 }
 
+/// Async function that sets the RGB levels for the LEDs
+/// F must implement the FnOnce trait
 async fn set_rgb_levels<F>(setter: F)
 where
     F: FnOnce(&mut [u32; 3]),
@@ -44,11 +49,14 @@ where
     setter(&mut rgb_levels);
 }
 
+/// Async function that returns the FPS
 async fn get_fps() -> u64 {
     let fps = FPS.lock().await;
     *fps
 }
 
+/// Async function that sets the FPS
+/// F must implement the FnOnce trait
 async fn set_fps<F>(setter: F)
 where
     F: FnOnce(&mut u64),
@@ -60,50 +68,49 @@ where
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) -> ! {
     rtt_init_print!();
-    let mut p = embassy_nrf::init(Default::default());
-    //let mut board = Microbit::default();
-    // let knob: Knob;
-    // let _ldr: Ldr;
-    // let shared_saadc = &mut board.saadc;
+    // Grabbing peripherals
+    let mut board = embassy_nrf::init(Default::default());
 
+    // Sets up the interrupt for SAADC
     bind_interrupts!(struct Irqs {
         SAADC => saadc::InterruptHandler;
     });
 
+    // Closure to help setup pins
     let led_pin = |p| Output::new(p, Level::Low, OutputDrive::Standard);
-    let red = led_pin(AnyPin::from(p.P0_09));
-    let green = led_pin(AnyPin::from(p.P0_10));
-    let blue = led_pin(AnyPin::from(p.P1_02));
+    // Seting up RGB pins
+    let red = led_pin(AnyPin::from(board.P0_09));
+    let green = led_pin(AnyPin::from(board.P0_10));
+    let blue = led_pin(AnyPin::from(board.P1_02));
     let rgb: Rgb = Rgb::new([red, green, blue], 100);
 
+    // Setting up SAADC
     let mut saadc_config = saadc::Config::default();
     saadc_config.resolution = saadc::Resolution::_14BIT;
     let saadc = saadc::Saadc::new(
-        p.SAADC,
+        board.SAADC,
         Irqs,
         saadc_config,
         [
-            saadc::ChannelConfig::single_ended(&mut p.P0_04), // P2
-            saadc::ChannelConfig::single_ended(&mut p.P0_28), // P4
+            // Configure first channel to use the pin the potentometer is wired to
+            saadc::ChannelConfig::single_ended(&mut board.P0_04), // P2
+            // Configure second channel to use the pin the photoresistor is wired to
+            saadc::ChannelConfig::single_ended(&mut board.P0_28), // P4
         ],
     );
-    /*
-        {
-            let temp = &mut saadc;
-            knob = Knob::new(temp).await;
-        }
-        {
-            _ldr = Ldr::new(&mut saadc).await;
-        }
-    */
+
+    // Create a new instance of our a2d with our saadc config
     let a2d = A2d::new(saadc).await;
 
+    // Create a new Ui using our a2d and button_a/button_b
     let mut ui = Ui::new(
         a2d,
-        Input::new(AnyPin::from(p.P0_14), Pull::Up), // button_a
-        Input::new(AnyPin::from(p.P0_23), Pull::Up), // button_b
+        Input::new(AnyPin::from(board.P0_14), Pull::Up), // button_a
+        Input::new(AnyPin::from(board.P0_23), Pull::Up), // button_b
     );
 
+    // Join the result of the two futures
+    // Neither of the two futures should return though
     join::join(rgb.run(), ui.run()).await;
 
     panic!("fell off end of main loop");
