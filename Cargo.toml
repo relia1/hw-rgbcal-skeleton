@@ -22,6 +22,10 @@ default-features = false
 version = "0.1.1"
 default-features = false
 
+[dependencies.embassy-nrf]
+version = "0.1.0"
+default-features = false
+
 [dependencies.embassy-sync]
 version = "0.5.0"
 default-features = false

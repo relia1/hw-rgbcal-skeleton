@@ -6,6 +6,9 @@ halt_afterwards = false
 
 [default.rtt]
 enabled = true
+log_enabled = true
+log_path = "./logs"
+timeout = 5000
 
 [default.gdb]
 enabled = false
