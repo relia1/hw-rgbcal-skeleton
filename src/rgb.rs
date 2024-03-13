@@ -1,21 +1,30 @@
 use crate::*;
 
+/// Type alias for our LED output pins
 type RgbPins = [Output<'static, AnyPin>; 3];
 
+/// This datatype provides our functionality for our LEDs
+/// They will be able to have their levels changed or the
+/// overall FPS can be changed
 pub struct Rgb {
     #[doc(alias = "RgbPins")]
     rgb: RgbPins,
     // Shadow variables to minimize lock contention.
     levels: [u32; 3],
+    // Number of ticks per frame
     tick_time: u64,
 }
 
+/// Implementation of RGB functionality
 impl Rgb {
+    /// Return the number of ticks per frame based on the framerate and levels
     pub fn frame_tick_time(frame_rate: u64) -> u64 {
         1_000_000 / (3 * frame_rate * LEVELS as u64)
     }
 
+    /// Create a new instance of RGB
     pub fn new(rgb: RgbPins, frame_rate: u64) -> Self {
+        // Calculate initial frame tick time
         let tick_time = Self::frame_tick_time(frame_rate);
         Self {
             rgb,
@@ -25,7 +34,7 @@ impl Rgb {
     }
 
     /// Have the LED be on/off for certain duration based on the level out of
-    /// 16 (0..16)
+    /// 16 (0..16, not inclusive of 16)
     async fn step(&mut self, led: usize) {
         let level = self.levels[led];
         // When the level is greater than 0, determine the number of ticks that
@@ -45,13 +54,17 @@ impl Rgb {
         }
     }
 
+    /// Async function that runs the RGB related events
     pub async fn run(mut self) -> ! {
         loop {
+            // Grab rgb levels
             self.levels = get_rgb_levels().await;
+            // Grab the frame tick time
             self.tick_time = rgb::Rgb::frame_tick_time(get_fps().await);
             #[cfg(debug_assertions)]
             rprintln!("frame tick time {}", self.tick_time);
 
+            // For each of the 3 LEDs perform the events related to RGB
             for led in 0..3 {
                 self.step(led).await;
             }
