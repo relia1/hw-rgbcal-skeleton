@@ -4,8 +4,8 @@ use crate::*;
 type RgbPins = [Output<'static, AnyPin>; 3];
 
 /// This datatype provides our functionality for our LEDs
-/// They will be able to have their levels changed or the
-/// overall FPS can be changed
+/// They will be able to have their levels changed
+/// levels and RgbPins are also shared with the Ui datatype
 pub struct Rgb {
     #[doc(alias = "RgbPins")]
     rgb: RgbPins,
