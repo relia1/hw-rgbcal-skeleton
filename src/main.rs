@@ -30,6 +30,8 @@ use num_traits::float::FloatCore;
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
 /// Global mutex tracking the scaled value from the potentometer for the FPS
 pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(10);
+/* /// Global mutex tracking the scaled ldr values
+pub static LDR_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);*/
 // Global constant for the number of levels in our scaling
 pub const LEVELS: u32 = 16;
 
@@ -48,6 +50,14 @@ where
     let mut rgb_levels = RGB_LEVELS.lock().await;
     setter(&mut rgb_levels);
 }
+
+/*
+/// Async function that returns the ldr levels for the LEDs
+async fn get_ldr_levels() -> [u32; 3] {
+    let ldr_levels = RGB_LEVELS.lock().await;
+    *ldr_levels
+}
+*/
 
 /// Async function that returns the FPS
 async fn get_fps() -> u64 {
@@ -111,6 +121,7 @@ async fn main(_spawner: Spawner) -> ! {
 
     // Join the result of the two futures
     // Neither of the two futures should return though
+    // ui.led_brightness().await;
     join::join(rgb.run(), ui.run()).await;
 
     panic!("fell off end of main loop");

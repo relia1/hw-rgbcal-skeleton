@@ -117,4 +117,23 @@ impl Ui {
             .await;
         }
     }
+
+    /*
+    /// Async function that calculates the brightness of each LED
+    pub async fn led_brightness(&mut self) {
+        for i in [0, 1, 2] {
+            self.state.levels[i] = 0;
+        }
+        set_rgb_levels(|rgb| *rgb = self.state.levels).await;
+
+        for led in 0..3 {
+            self.state.levels[led] = 15;
+            set_rgb_levels(|rgb| *rgb = self.state.levels).await;
+            Timer::after_millis(1000).await;
+            let ldr_level = self.a2d.measure_ldr().await;
+            rprintln!("LED {} brightness: {}\n", led, ldr_level);
+            Timer::after_millis(1000).await;
+        }
+    }
+    */
 }
