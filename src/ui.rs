@@ -56,6 +56,11 @@ impl Ui {
 
     /// Async function for running our Ui events
     pub async fn run(&mut self) -> ! {
+        for i in [0, 1, 2] {
+            self.state.levels[i] = self.a2d.measure_knob().await;
+        }
+        set_rgb_levels(|rgb| *rgb = self.state.levels).await;
+
         loop {
             // If both buttons are pressed allow changes to the red LED
             // If button_a is pressed allow changes to the green LED

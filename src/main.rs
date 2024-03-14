@@ -29,7 +29,7 @@ use num_traits::float::FloatCore;
 /// Global mutex tracking the scaled value from the potentometer assigned to the LED
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
 /// Global mutex tracking the scaled value from the potentometer for the FPS
-pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(1);
+pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(10);
 // Global constant for the number of levels in our scaling
 pub const LEVELS: u32 = 16;
 
