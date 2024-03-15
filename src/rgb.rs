@@ -18,7 +18,7 @@ pub struct Rgb {
 /// Implementation of RGB functionality
 impl Rgb {
     /// Return the number of ticks per frame based on the frame rate and levels
-    pub fn frame_tick_time(frame_rate: u64) -> u64 {
+    fn frame_tick_time(frame_rate: u64) -> u64 {
         1_000_000 / (3 * frame_rate * LEVELS as u64)
     }
 
