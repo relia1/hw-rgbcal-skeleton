@@ -3,11 +3,11 @@
 /// and convert those to a digital representation
 use crate::*;
 
-/// A type alias for an Saadc object with 2 channels
+/// A type alias for a Saadc object with 2 channels
 pub type Adc = saadc::Saadc<'static, 2>;
 
 /// This datatype calibrates the ADC and provides 2 async functions
-/// 1. `measure_knob()`: This gets a sample back from our potentometer
+/// 1. `measure_knob()`: This gets a sample back from our potentiometer
 /// 2. `measure_ldr()`:  This gets a sample back from our photoresistor
 pub struct A2d(Adc);
 impl A2d {
@@ -38,7 +38,7 @@ impl A2d {
         Self(adc)
     }
 
-    /// Return a sample from the potentometer and scale it between 0 and 15
+    /// Return a sample from the potentiometer and scale it between 0 and 15
     pub async fn measure_knob(&mut self) -> u32 {
         let mut buf = [0, 0];
         self.0.sample(&mut buf).await;

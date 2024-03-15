@@ -23,7 +23,7 @@ impl UiState {
 /// Implement the Default trait for UiState
 impl Default for UiState {
     /// Set the levels for the 3 pins to 15
-    /// Set the framerate to 100
+    /// Set the frame rate to 100
     fn default() -> Self {
         Self {
             levels: [LEVELS - 1, LEVELS - 1, LEVELS - 1],
@@ -35,7 +35,7 @@ impl Default for UiState {
 /// Datatype for interacting with our Ui
 pub struct Ui {
     // Analog to digital datatype for getting a digital representation of the readings
-    // of the potentometer and photoresistor
+    // of the potentiometer and photoresistor
     a2d: A2d,
     button_a: Button,
     button_b: Button,
@@ -74,7 +74,7 @@ impl Ui {
             };
 
             if led_index == 99 {
-                // update framerate
+                // update frame rate
                 debug_rprintln!("Checking if fps are being updated\n");
                 self.update_fps().await;
             } else {

@@ -28,9 +28,9 @@ use microbit_bsp::{
 };
 use num_traits::float::FloatCore;
 
-/// Global mutex tracking the scaled value from the potentometer assigned to the LED
+/// Global mutex tracking the scaled value from the potentiometer assigned to the LED
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
-/// Global mutex tracking the scaled value from the potentometer for the FPS
+/// Global mutex tracking the scaled value from the potentiometer for the FPS
 pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(10);
 /// Global mutex tracking the scaled ldr values
 pub static LDR_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
@@ -129,9 +129,9 @@ async fn main(_spawner: Spawner) -> ! {
         SAADC => saadc::InterruptHandler;
     });
 
-    // Closure to help setup pins
+    // Closure to help set up pins
     let led_pin = |p| Output::new(p, Level::Low, OutputDrive::Standard);
-    // Seting up RGB pins
+    // Setting up RGB pins
     let red = led_pin(AnyPin::from(board.P0_09));
     let green = led_pin(AnyPin::from(board.P0_10));
     let blue = led_pin(AnyPin::from(board.P1_02));
@@ -145,7 +145,7 @@ async fn main(_spawner: Spawner) -> ! {
         Irqs,
         saadc_config,
         [
-            // Configure first channel to use the pin the potentometer is wired to
+            // Configure first channel to use the pin the potentiometer is wired to
             saadc::ChannelConfig::single_ended(&mut board.P0_04), // P2
             // Configure second channel to use the pin the photoresistor is wired to
             saadc::ChannelConfig::single_ended(&mut board.P0_28), // P4

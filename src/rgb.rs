@@ -17,7 +17,7 @@ pub struct Rgb {
 
 /// Implementation of RGB functionality
 impl Rgb {
-    /// Return the number of ticks per frame based on the framerate and levels
+    /// Return the number of ticks per frame based on the frame rate and levels
     pub fn frame_tick_time(frame_rate: u64) -> u64 {
         1_000_000 / (3 * frame_rate * LEVELS as u64)
     }
@@ -46,7 +46,7 @@ impl Rgb {
             self.rgb[led].set_low();
         }
 
-        // Determine the remaining the remaining ticks for the LED to be off
+        // Determine the remaining ticks for the LED to be off
         let level = LEVELS - level;
         if level > 0 {
             let off_time = level as u64 * self.tick_time;
