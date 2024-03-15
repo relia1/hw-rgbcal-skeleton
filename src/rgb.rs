@@ -5,7 +5,7 @@ type RgbPins = [Output<'static, AnyPin>; 3];
 
 /// This datatype provides our functionality for our LEDs
 /// They will be able to have their levels changed
-/// levels and RgbPins are also shared with the Ui datatype
+/// `levels` and `RgbPins` are also shared with the Ui datatype
 pub struct Rgb {
     #[doc(alias = "RgbPins")]
     rgb: RgbPins,
@@ -61,8 +61,7 @@ impl Rgb {
             self.levels = get_rgb_levels().await;
             // Grab the frame tick time
             self.tick_time = rgb::Rgb::frame_tick_time(get_fps().await);
-            #[cfg(debug_assertions)]
-            rprintln!("frame tick time {}", self.tick_time);
+            debug_rprintln!("frame tick time {}", self.tick_time);
 
             // For each of the 3 LEDs perform the events related to RGB
             for led in 0..3 {

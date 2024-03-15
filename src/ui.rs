@@ -75,12 +75,10 @@ impl Ui {
 
             if led_index == 99 {
                 // update framerate
-                #[cfg(debug_assertions)]
-                rprintln!("Checking if fps are being updated\n");
+                debug_rprintln!("Checking if fps are being updated\n");
                 self.update_fps().await;
             } else {
-                #[cfg(debug_assertions)]
-                rprintln!("Checking if rgb levels are being updated\n");
+                debug_rprintln!("Checking if rgb levels are being updated\n");
                 self.update_level(led_index).await;
             }
         }

@@ -7,8 +7,8 @@ use crate::*;
 pub type Adc = saadc::Saadc<'static, 2>;
 
 /// This datatype calibrates the ADC and provides 2 async functions
-/// 1. measure_knob(): This gets a sample back from our potentometer
-/// 2. measure_ldr():  This gets a sample back from our photoresistor
+/// 1. `measure_knob()`: This gets a sample back from our potentometer
+/// 2. `measure_ldr()`:  This gets a sample back from our photoresistor
 pub struct A2d(Adc);
 impl A2d {
     /// Create a new 'A2d' and calibrates the ACD
@@ -39,7 +39,6 @@ impl A2d {
     }
 
     /// Return a sample from the potentometer and scale it between 0 and 15
-
     pub async fn measure_knob(&mut self) -> u32 {
         let mut buf = [0, 0];
         self.0.sample(&mut buf).await;

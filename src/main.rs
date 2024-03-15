@@ -2,15 +2,17 @@
 #![no_main]
 
 mod a2d;
+mod macros;
 mod rgb;
 mod ui;
 /// Reexports
 pub use a2d::*;
+
 pub use rgb::*;
 pub use ui::*;
 
 use panic_rtt_target as _;
-use rtt_target::{rprintln, rtt_init_print};
+use rtt_target::{debug_rprintln, rprintln, rtt_init_print};
 
 use embassy_executor::Spawner;
 use embassy_futures::join;
@@ -30,19 +32,37 @@ use num_traits::float::FloatCore;
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
 /// Global mutex tracking the scaled value from the potentometer for the FPS
 pub static FPS: Mutex<ThreadModeRawMutex, u64> = Mutex::new(10);
-/* /// Global mutex tracking the scaled ldr values
-pub static LDR_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);*/
+/// Global mutex tracking the scaled ldr values
+pub static LDR_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
 // Global constant for the number of levels in our scaling
 pub const LEVELS: u32 = 16;
 
-/// Async function that returns the RGB levels for the LEDs
-async fn get_rgb_levels() -> [u32; 3] {
+async_getter!(
+    /// Async function that returns the RGB levels for the LEDs
+    get_rgb_levels,
+    rgb_levels,
+    RGB_LEVELS,
+    [u32; 3]
+);
+/*async fn get_rgb_levels() -> [u32; 3] {
     let rgb_levels = RGB_LEVELS.lock().await;
     *rgb_levels
-}
+}*/
 
-/// Async function that sets the RGB levels for the LEDs
-/// F must implement the FnOnce trait
+async_setter!(
+    /// Async function that sets the RGB levels for the LEDs
+    /// F must implement the FnOnce trait
+    set_rgb_levels,
+    rgb_levels,
+    [u32; 3],
+    RGB_LEVELS,
+    {
+        let mut fps = FPS.lock().await;
+        setter(&mut fps);
+    }
+);
+
+/*
 async fn set_rgb_levels<F>(setter: F)
 where
     F: FnOnce(&mut [u32; 3]),
@@ -50,23 +70,45 @@ where
     let mut rgb_levels = RGB_LEVELS.lock().await;
     setter(&mut rgb_levels);
 }
+*/
 
 /*
 /// Async function that returns the ldr levels for the LEDs
+async_getter!(get_ldr_levels, ldr_levels, LDR_LEVELS, [u32; 3]);
 async fn get_ldr_levels() -> [u32; 3] {
-    let ldr_levels = RGB_LEVELS.lock().await;
+    let ldr_levels = LDR_LEVELS.lock().await;
     *ldr_levels
 }
 */
 
-/// Async function that returns the FPS
+async_getter!(
+    /// Async function that returns the FPS
+    get_fps,
+    fps,
+    FPS,
+    u64
+);
+/*
 async fn get_fps() -> u64 {
     let fps = FPS.lock().await;
     *fps
 }
+*/
 
-/// Async function that sets the FPS
-/// F must implement the FnOnce trait
+async_setter!(
+    /// Async function that sets the FPS
+    /// F must implement the FnOnce trait
+    set_fps,
+    fps,
+    u64,
+    FPS,
+    {
+        let mut fps = FPS.lock().await;
+        setter(&mut fps);
+    }
+);
+
+/*
 async fn set_fps<F>(setter: F)
 where
     F: FnOnce(&mut u64),
@@ -74,6 +116,7 @@ where
     let mut fps = FPS.lock().await;
     setter(&mut fps);
 }
+*/
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) -> ! {
