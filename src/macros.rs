@@ -28,16 +28,3 @@ macro_rules! async_setter {
         }
     };
 }
-
-/*
-/// Async function that sets the FPS
-/// F must implement the FnOnce trait
-async fn set_fps<F>(setter: F)
-where
-    F: FnOnce(&mut u64),
-{
-    let mut fps = FPS.lock().await;
-    setter(&mut fps);
-}
-
-*/
