@@ -91,3 +91,4 @@ RGB values.
 - Ongoing experiments with a photoresistor to determine the brightness of the LEDs
 - Was not able to get a smooth fps under 50
 - Added some macros, they aren't really useful in this case, but I wanted to experiment with them
+- Added cargo build and cargo clippy to github actions on push to main
