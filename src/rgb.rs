@@ -17,15 +17,10 @@ pub struct Rgb {
 
 /// Implementation of RGB functionality
 impl Rgb {
-    /// Return the number of ticks per frame based on the frame rate and levels
-    fn frame_tick_time(frame_rate: u64) -> u64 {
-        1_000_000 / (3 * frame_rate * LEVELS as u64)
-    }
-
     /// Create a new instance of RGB
     pub fn new(rgb: RgbPins, frame_rate: u64) -> Self {
         // Calculate initial frame tick time
-        let tick_time = Self::frame_tick_time(frame_rate);
+        let tick_time = frame_tick_time(frame_rate);
         Self {
             rgb,
             levels: [0; 3],
@@ -60,7 +55,7 @@ impl Rgb {
             // Grab rgb levels
             self.levels = get_rgb_levels().await;
             // Grab the frame tick time
-            self.tick_time = rgb::Rgb::frame_tick_time(get_fps().await);
+            self.tick_time = frame_tick_time(get_fps().await);
             debug_rprintln!("frame tick time {}", self.tick_time);
 
             // For each of the 3 LEDs perform the events related to RGB
