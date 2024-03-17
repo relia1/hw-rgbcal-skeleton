@@ -104,7 +104,7 @@ impl Ui {
     /// the newly received FPS. If so don't change anything
     /// If it is not, then update the global FPS
     pub async fn update_fps(&mut self) {
-        let fps: u64 = (self.a2d.measure_knob().await as u64 * 10) + 10;
+        let fps: u64 = convert_to_fps(self.a2d.measure_knob().await);
         if fps != self.state.frame_rate {
             self.state.frame_rate = fps;
             self.state.show();
