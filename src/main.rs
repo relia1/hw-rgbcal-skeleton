@@ -2,12 +2,13 @@
 #![no_main]
 
 mod a2d;
+mod frame_rate;
 mod macros;
 mod rgb;
 mod ui;
 /// Reexports
 pub use a2d::*;
-
+pub use frame_rate::*;
 pub use rgb::*;
 pub use ui::*;
 
@@ -26,7 +27,6 @@ use microbit_bsp::{
     },
     Button,
 };
-use num_traits::float::FloatCore;
 
 /// Global mutex tracking the scaled value from the potentiometer assigned to the LED
 pub static RGB_LEVELS: Mutex<ThreadModeRawMutex, [u32; 3]> = Mutex::new([0; 3]);
@@ -140,6 +140,7 @@ async fn main(_spawner: Spawner) -> ! {
     // Setting up SAADC
     let mut saadc_config = saadc::Config::default();
     saadc_config.resolution = saadc::Resolution::_14BIT;
+    saadc_config.oversample = saadc::Oversample::OVER8X;
     let saadc = saadc::Saadc::new(
         board.SAADC,
         Irqs,
