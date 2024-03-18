@@ -84,7 +84,7 @@ So instead of using the microbit_bsp::Microbit, I needed to directly use embassy
 directly. This was due to not all the analog pins being available in the microbit_bsp. 
 I have some ongoing experiments with a photoresistor for trying to determine the  
 brightness of the LEDs. The thinking is if you can determine the brightness of the  
-LEDs, you can adjust the frame rate and RGB levels to get specific colors based on
+LEDs, you can adjust the frame rate and RGB levels to get specific colors based on  
 RGB values.
 
 ## Any additional observations of interest

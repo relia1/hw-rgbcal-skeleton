@@ -29,7 +29,7 @@ impl Rgb {
     }
 
     /// Have the LED be on/off for certain duration based on the level out of
-    /// 16 (0..16, not inclusive of 16)
+    /// 16 (0...15)
     async fn step(&mut self, led: usize) {
         let level = self.levels[led];
         // When the level is greater than 0, determine the number of ticks that
